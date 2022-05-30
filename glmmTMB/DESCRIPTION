@@ -44,7 +44,8 @@ Imports:
     lme4 (>= 1.1-18.9000),
     Matrix,
     nlme,
-    numDeriv
+    numDeriv,
+    reformulas
 LinkingTo: TMB, RcppEigen
 Suggests:
     knitr,
@@ -82,4 +83,4 @@ LazyData: TRUE
 BugReports: https://github.com/glmmTMB/glmmTMB/issues
 NeedsCompilation: yes
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0

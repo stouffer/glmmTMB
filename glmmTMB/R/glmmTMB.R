@@ -1,6 +1,8 @@
 ## internal flag for debugging OpenMP behaviour
 debug_openmp <- FALSE
 
+#' @importFrom reformulas reOnly findbars nobars subbars inForm noSpecials addForm RHSForm RHSForm<- drop.special no_specials splitForm extractForm addForm0 makeOp
+
 ## avoid repetition; rely on environment for parameters
 optfun <- function(obj, control) {
     res <- with(obj,
@@ -139,7 +141,7 @@ startParams <- function(parameters,
     names(par.list) <- c("theta", "b", "fact_load")
     # Use glmmTMB to get initial starting values for factor loadings and latent variables
     fr.res <- cbind(fr, resid)
-    ranForm <- no_specials(findbars_x(RHSForm(formula)))
+    ranForm <- no_specials(findbars(RHSForm(formula)))
     nrr <- length(namBlk)
     rrTrm <- lapply(1:length(namBlk), function(x) as.character(ranForm[ranForm == namBlk][[x]]))
     x <- sapply(1:nrr, function(x) paste(rrTrm[[x]][2], rrTrm[[x]][1], rrTrm[[x]][3]))
@@ -516,7 +518,6 @@ mkTMBStruc <- function(formula, ziformula, dispformula,
 ##'
 ##' @importFrom stats model.matrix contrasts
 ##' @importFrom methods new
-##' @importFrom lme4 findbars nobars
 getXReTrms <- function(formula, mf, fr, ranOK=TRUE, type="", contrasts, sparse=FALSE) {
     ## fixed-effects model matrix X -
     ## remove random effect parts from formula:
@@ -575,7 +576,7 @@ getXReTrms <- function(formula, mf, fr, ranOK=TRUE, type="", contrasts, sparse=F
     ## important to COPY formula (and its environment)?
     ranform <- formula
 
-    if (is.null(findbars_x(ranform))) {
+    if (is.null(findbars(ranform))) {
         reTrms <- reXterms <- NULL
         Z <- new("dgCMatrix",Dim=c(as.integer(nobs),0L)) ## matrix(0, ncol=0, nrow=nobs)
         aa <- integer(0) #added for rr to get rank
@@ -587,7 +588,7 @@ getXReTrms <- function(formula, mf, fr, ranOK=TRUE, type="", contrasts, sparse=F
         RHSForm(ranform) <- subbars(RHSForm(reOnly(formula)))
 
         mf$formula <- ranform
-        reTrms <- mkReTrms(no_specials(findbars_x(formula)),
+        reTrms <- mkReTrms(no_specials(findbars(formula)),
                            fr, reorder.terms=FALSE)
 
         ss <- splitForm(formula)
@@ -837,7 +838,7 @@ binomialType <- function(x) {
 ##' @param map a list specifying which parameter values should be fixed to a constant value rather than estimated. \code{map} should be a named list containing factors corresponding to a subset of the internal parameter names (see \code{start} parameter). Distinct factor values are fitted as separate parameter values, \code{NA} values are held fixed: e.g., \code{map=list(beta=factor(c(1,2,3,NA)))} would fit the first three fixed-effect parameters of the conditional model and fix the fourth parameter to its starting value. In general, users will probably want to use \code{start} to specify non-default starting values for fixed parameters. See \code{\link[TMB]{MakeADFun}} for more details.
 ##' @param sparseX a named logical vector containing (possibly) elements named "cond", "zi", "disp" to indicate whether fixed-effect model matrices for particular model components should be generated as sparse matrices, e.g. \code{c(cond=TRUE)}. Default is all \code{FALSE}
 ##' @importFrom stats gaussian binomial poisson nlminb as.formula terms model.weights
-##' @importFrom lme4 subbars findbars mkReTrms nobars
+##' @importFrom lme4 mkReTrms
 ##' @importFrom Matrix t
 ##' @importFrom TMB MakeADFun sdreport
 ##' @details
