@@ -1215,7 +1215,7 @@ simulate.glmmTMB<-function(object, nsim=1, seed=NULL, ...){
 #' @param component formula for which component of the model to return (conditional, zero-inflation, or dispersion)
 #' @param fixed.only (logical) drop random effects, returning only the fixed-effect component of the formula?
 #' @param ... unused, for generic consistency
-#' @importFrom lme4 nobars
+#' @importFrom reformulas nobars
 #' @export
 formula.glmmTMB <- function(x, fixed.only=FALSE,
                             component=c("cond", "zi", "disp"),
@@ -1228,7 +1228,7 @@ formula.glmmTMB <- function(x, fixed.only=FALSE,
     af <- x$modelInfo$allForm
     ff <- if (component=="cond") af[["formula"]] else af[[paste0(component,"formula")]]
     if (fixed.only) {
-        ff <- lme4::nobars(ff)
+        ff <- nobars(ff)
     }
     return(ff)
 }
@@ -1263,7 +1263,7 @@ model.matrix.glmmTMB <- function (object, component="cond", part="fixed", ...)
                        cond="formula",
                        zi="ziformula",
                        disp="dispformula")]]
-    model.matrix(lme4::nobars(form), model.frame(object, ...),
+    model.matrix(nobars(form), model.frame(object, ...),
                  contrasts.arg = object$modelInfo$contrasts)
     ## FIXME: what if contrasts are *different* for different components? (ugh)
     ## should at least write a test to flag this case ...
